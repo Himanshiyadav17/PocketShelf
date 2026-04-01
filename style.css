@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Quicksand", sans-serif;
+  background: linear-gradient(to bottom, #fff0f6, #f3e8ff);
+  text-align: center;
+  color: #4b006e;
+}
+
+/* Header */
+h1 {
+  margin: 0;
+  padding: 25px 10px;
+  font-family: "Pacifico", cursive;
+  font-size: 34px;
+  color: white;
+  background: linear-gradient(to right, #ff8fab, #c77dff);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+}
+
+/* Search Box */
+.searchBox {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+.searchBox input {
+  padding: 14px;
+  width: 300px;
+  max-width: 90%;
+  border: none;
+  border-radius: 18px;
+  outline: none;
+  font-size: 15px;
+  background-color: white;
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Quicksand", sans-serif;
+}
+
+.searchBox input::placeholder {
+  color: #c77dff;
+  font-weight: 600;
+}
+
+.searchBox input:focus {
+  box-shadow: 0px 0px 12px rgba(199, 125, 255, 0.6);
+  border: 2px solid #ff8fab;
+}
+
+/* Button */
+.searchBox button {
+  padding: 14px 25px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(to right, #ff8fab, #c77dff);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.15);
+  font-family: "Quicksand", sans-serif;
+}
+
+.searchBox button:hover {
+  transform: scale(1.07);
+  box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading Text */
+#loadingText {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 20px;
+  color: #c77dff;
+}
+
+/* Book Grid */
+#bookList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 25px;
+}
+
+/* Book Card */
+.bookCard {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  padding: 18px;
+  border-radius: 22px;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.12);
+  transition: 0.3s ease;
+  border: 2px solid rgba(255, 143, 171, 0.3);
+}
+
+.bookCard:hover {
+  transform: translateY(-8px);
+  border-color: rgba(199, 125, 255, 0.6);
+  box-shadow: 0px 10px 22px rgba(0, 0, 0, 0.2);
+}
+
+/* Book Image */
+.bookCard img {
+  width: 120px;
+  height: 175px;
+  border-radius: 15px;
+  object-fit: cover;
+  border: 3px solid rgba(199, 125, 255, 0.4);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.bookCard h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 12px 0 6px;
+  color: #7b2cbf;
+}
+
+/* Author */
+.bookCard p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff4d88;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  h1 {
+    font-size: 28px;
+  }
+
+  .searchBox button {
+    width: 200px;
+  }
+}
