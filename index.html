@@ -11,9 +11,31 @@
 
   <h1>📚 Book Finder</h1>
 
+  <div class="topButtons">
+    <button id="themeBtn">🌙 Dark Mode</button>
+    <button id="favBtn">❤️ Favorites</button>
+  </div>
+
   <div class="searchBox">
     <input type="text" id="searchInput" placeholder="Enter book name..." />
     <button id="searchBtn">Search</button>
+  </div>
+
+
+  <div class="controlsBox">
+    <input type="text" id="filterInput" placeholder="Search inside results..." />
+
+    <select id="sortSelect">
+      <option value="default">Sort By</option>
+      <option value="az">Title A-Z</option>
+      <option value="za">Title Z-A</option>
+    </select>
+
+    <select id="authorFilter">
+      <option value="all">All Books</option>
+      <option value="author">With Author</option>
+      <option value="noauthor">No Author</option>
+    </select>
   </div>
 
   <p id="loadingText"></p>
