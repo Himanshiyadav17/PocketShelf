@@ -1,6 +1,118 @@
-/* EXTRA CONTROLS BOX */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f8fafc, #fce7f3, #ede9fe);
+  min-height: 100vh;
+  text-align: center;
+  color: #111827;
+  padding-bottom: 50px;
+}
+
+
+h1 {
+  padding: 22px 10px;
+  font-size: 34px;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(to right, #6d28d9, #ec4899);
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+
+
+.topButtons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.topButtons button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #4c1d95;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+.topButtons button:hover {
+  transform: translateY(-3px);
+  background: white;
+}
+
+
+
+.searchBox {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+.searchBox input {
+  padding: 14px 16px;
+  width: 320px;
+  max-width: 90%;
+  border: none;
+  border-radius: 14px;
+  outline: none;
+  font-size: 15px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 5px 14px rgba(0, 0, 0, 0.12);
+}
+
+.searchBox input::placeholder {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.searchBox input:focus {
+  border: 2px solid #ec4899;
+  box-shadow: 0px 0px 14px rgba(109, 40, 217, 0.4);
+}
+
+
+
+
+.searchBox button {
+  padding: 14px 26px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(to right, #6d28d9, #ec4899);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.searchBox button:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 18px rgba(0, 0, 0, 0.25);
+}
+
+
+
 .controlsBox {
-  margin: 20px auto;
+  margin: 25px auto;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -10,49 +122,96 @@
 
 .controlsBox input,
 .controlsBox select {
-  padding: 12px;
-  border-radius: 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
   border: none;
   outline: none;
   font-size: 14px;
-  font-family: "Quicksand", sans-serif;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Top Buttons */
-.topButtons {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.topButtons button {
-  padding: 10px 18px;
-  border: none;
-  border-radius: 18px;
-  background: white;
-  color: #7b2cbf;
-  font-weight: 700;
-  cursor: pointer;
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.12);
-  transition: 0.3s;
+  font-weight: 600;
 }
 
-.topButtons button:hover {
-  transform: scale(1.05);
+.controlsBox select {
+  cursor: pointer;
 }
 
-/* Card Buttons */
-.cardButtons {
-  margin-top: 12px;
+
+
+#loadingText {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 15px;
+  color: #6d28d9;
+}
+
+
+
+#bookList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 22px;
+  padding: 25px;
+}
+
+
+
+.bookCard {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  padding: 18px;
+  border-radius: 20px;
+  box-shadow: 0px 10px 18px rgba(0, 0, 0, 0.14);
+  transition: 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
 }
 
+.bookCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0px 16px 25px rgba(0, 0, 0, 0.18);
+}
+
+
+
+.bookCard img {
+  width: 130px;
+  height: 185px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 2px solid rgba(109, 40, 217, 0.3);
+  box-shadow: 0px 8px 14px rgba(0, 0, 0, 0.12);
+}
+
+
+.bookCard h3 {
+  font-size: 16px;
+  font-weight: 800;
+  margin: 12px 0 6px;
+  color: #111827;
+}
+
+
+.bookCard p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+
+.cardButtons {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .cardButtons button {
+  flex: 1;
   border: none;
   padding: 10px 12px;
   border-radius: 14px;
@@ -63,7 +222,7 @@
 }
 
 .viewBtn {
-  background: linear-gradient(to right, #ff8fab, #c77dff);
+  background: linear-gradient(to right, #6d28d9, #ec4899);
   color: white;
 }
 
@@ -72,46 +231,77 @@
 }
 
 .favHeart {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   font-size: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* DARK MODE */
+.favHeart:hover {
+  transform: scale(1.05);
+  background: white;
+}
+
+
+
 .dark {
-  background: linear-gradient(to bottom, #1c1c2b, #2a2a40);
+  background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
   color: white;
 }
 
 .dark h1 {
-  background: linear-gradient(to right, #3a0ca3, #7209b7);
+  background: linear-gradient(to right, #4f46e5, #ec4899);
 }
 
-.dark .bookCard {
+.dark .topButtons button {
   background: rgba(255, 255, 255, 0.12);
-  border: 2px solid rgba(255, 255, 255, 0.2);
   color: white;
 }
 
-.dark .bookCard h3 {
-  color: #ffd6ff;
-}
-
-.dark .bookCard p {
-  color: #ffb3c6;
-}
-
 .dark .searchBox input {
-  background-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   color: white;
 }
 
 .dark .controlsBox input,
 .dark .controlsBox select {
-  background-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   color: white;
 }
 
-.dark .topButtons button {
-  background: rgba(255, 255, 255, 0.15);
+.dark .bookCard {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.dark .bookCard h3 {
   color: white;
+}
+
+.dark .bookCard p {
+  color: #cbd5e1;
+}
+
+.dark .favHeart {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+}
+
+
+
+@media (max-width: 500px) {
+  h1 {
+    font-size: 28px;
+  }
+
+  .searchBox button {
+    width: 200px;
+  }
+
+  .cardButtons {
+    flex-direction: column;
+  }
+
+  .cardButtons button {
+    width: 100%;
+  }
 }

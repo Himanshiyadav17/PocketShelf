@@ -114,7 +114,7 @@ function getBooks() {
 function applyFiltersAndSort() {
   let filteredBooks = allBooks;
 
-  // Search inside results
+  
   let text = filterInput.value.toLowerCase();
   if (text !== "") {
     filteredBooks = filteredBooks.filter(function (book) {
@@ -123,7 +123,8 @@ function applyFiltersAndSort() {
     });
   }
 
-  // Filter by author
+  
+  
   let authorValue = authorFilter.value;
 
   if (authorValue === "author") {
@@ -136,7 +137,7 @@ function applyFiltersAndSort() {
     });
   }
 
-  // Sorting
+  
   let sortValue = sortSelect.value;
 
   if (sortValue === "az") {
