@@ -14,10 +14,10 @@ let allBooks = [];
 let showingFavorites = false;
 
 
-function applyTheme() {
-  let savedTheme = localStorage.getItem("theme");
+function setTheme() {
+  let theme = localStorage.getItem("theme");
 
-  if (savedTheme === "dark") {
+  if (theme === "dark") {
     document.body.classList.add("dark");
     themeBtn.innerText = "☀️ Light Mode";
   } else {
@@ -32,50 +32,49 @@ themeBtn.addEventListener("click", function () {
   } else {
     localStorage.setItem("theme", "dark");
   }
-
-  applyTheme();
+  setTheme();
 });
 
-applyTheme();
+setTheme();
 
 
-function getFavorites() {
+
+function getFavBooks() {
   let favData = localStorage.getItem("favorites");
   return favData ? JSON.parse(favData) : [];
 }
 
-function saveFavorites(favs) {
+function saveFavBooks(favs) {
   localStorage.setItem("favorites", JSON.stringify(favs));
 }
 
-function toggleFavorite(bookObj) {
-  let favs = getFavorites();
+function toggleFav(book) {
+  let favs = getFavBooks();
 
-  let alreadyExists = favs.find(function (b) {
-    return b.id === bookObj.id;
+  let found = favs.find(function (b) {
+    return b.id === book.id;
   });
 
-  if (alreadyExists) {
+  if (found) {
     favs = favs.filter(function (b) {
-      return b.id !== bookObj.id;
+      return b.id !== book.id;
     });
   } else {
-    favs.push(bookObj);
+    favs.push(book);
   }
 
-  saveFavorites(favs);
+  saveFavBooks(favs);
 
   if (showingFavorites) {
-    showBooks(getFavorites());
+    showBooks(getFavBooks());
   } else {
-    applyFiltersAndSort();
+    filterSortAndShow();
   }
 }
 
 
-
-function getBooks() {
-  let searchValue = searchInput.value;
+function fetchBooks() {
+  let searchValue = searchInput.value.trim();
 
   if (searchValue === "") {
     alert("Please enter a book name!");
@@ -83,56 +82,55 @@ function getBooks() {
   }
 
   showingFavorites = false;
-
   loadingText.innerText = "Loading books...";
   bookList.innerHTML = "";
 
   fetch("https://www.googleapis.com/books/v1/volumes?q=" + searchValue)
-    .then(function (response) {
-      return response.json();
+    .then(function (res) {
+      return res.json();
     })
     .then(function (data) {
       loadingText.innerText = "";
 
-      if (data.items == undefined) {
+      if (!data.items) {
         bookList.innerHTML = "<h2>No books found</h2>";
         allBooks = [];
         return;
       }
 
       allBooks = data.items;
-      applyFiltersAndSort();
+      filterSortAndShow();
     })
-    .catch(function (error) {
-      loadingText.innerText = "Something went wrong!";
-      console.log(error);
+    .catch(function () {
+      loadingText.innerText = "";
+      bookList.innerHTML = "<h2>Something went wrong!</h2>";
     });
 }
 
 
+function filterSortAndShow() {
+  let books = [...allBooks];
 
-function applyFiltersAndSort() {
-  let filteredBooks = allBooks;
-
-  
-  let text = filterInput.value.toLowerCase();
+  // Filter by title text
+  let text = filterInput.value.toLowerCase().trim();
   if (text !== "") {
-    filteredBooks = filteredBooks.filter(function (book) {
+    books = books.filter(function (book) {
       let title = book.volumeInfo.title ? book.volumeInfo.title.toLowerCase() : "";
       return title.includes(text);
     });
   }
 
   
-  
   let authorValue = authorFilter.value;
 
   if (authorValue === "author") {
-    filteredBooks = filteredBooks.filter(function (book) {
+    books = books.filter(function (book) {
       return book.volumeInfo.authors !== undefined;
     });
-  } else if (authorValue === "noauthor") {
-    filteredBooks = filteredBooks.filter(function (book) {
+  }
+
+  if (authorValue === "noauthor") {
+    books = books.filter(function (book) {
       return book.volumeInfo.authors === undefined;
     });
   }
@@ -141,7 +139,7 @@ function applyFiltersAndSort() {
   let sortValue = sortSelect.value;
 
   if (sortValue === "az") {
-    filteredBooks = filteredBooks.sort(function (a, b) {
+    books.sort(function (a, b) {
       let titleA = a.volumeInfo.title ? a.volumeInfo.title.toLowerCase() : "";
       let titleB = b.volumeInfo.title ? b.volumeInfo.title.toLowerCase() : "";
       return titleA.localeCompare(titleB);
@@ -149,15 +147,16 @@ function applyFiltersAndSort() {
   }
 
   if (sortValue === "za") {
-    filteredBooks = filteredBooks.sort(function (a, b) {
+    books.sort(function (a, b) {
       let titleA = a.volumeInfo.title ? a.volumeInfo.title.toLowerCase() : "";
       let titleB = b.volumeInfo.title ? b.volumeInfo.title.toLowerCase() : "";
       return titleB.localeCompare(titleA);
     });
   }
 
-  showBooks(filteredBooks);
+  showBooks(books);
 }
+
 
 
 function showBooks(books) {
@@ -168,19 +167,16 @@ function showBooks(books) {
     return;
   }
 
-  let favs = getFavorites();
+  let favs = getFavBooks();
 
   books.forEach(function (book) {
-    let title = book.volumeInfo.title;
-    let author = book.volumeInfo.authors;
+    let title = book.volumeInfo.title || "No Title";
+    let author = book.volumeInfo.authors ? book.volumeInfo.authors[0] : "Unknown Author";
     let link = book.volumeInfo.previewLink;
 
-    let image = "";
-    if (book.volumeInfo.imageLinks) {
-      image = book.volumeInfo.imageLinks.thumbnail;
-    } else {
-      image = "https://via.placeholder.com/100x140?text=No+Image";
-    }
+    let image = book.volumeInfo.imageLinks
+      ? book.volumeInfo.imageLinks.thumbnail
+      : "https://via.placeholder.com/100x140?text=No+Image";
 
     let isFav = favs.find(function (b) {
       return b.id === book.id;
@@ -190,9 +186,9 @@ function showBooks(books) {
     card.className = "bookCard";
 
     card.innerHTML = `
-      <img src="${image}" />
+      <img src="${image}" alt="${title}">
       <h3>${title}</h3>
-      <p>${author ? author[0] : "Unknown Author"}</p>
+      <p>${author}</p>
 
       <div class="cardButtons">
         <button class="viewBtn">📖 View</button>
@@ -200,14 +196,12 @@ function showBooks(books) {
       </div>
     `;
 
-    let viewBtn = card.querySelector(".viewBtn");
-    viewBtn.addEventListener("click", function () {
+    card.querySelector(".viewBtn").addEventListener("click", function () {
       window.open(link, "_blank");
     });
 
-    let favHeart = card.querySelector(".favHeart");
-    favHeart.addEventListener("click", function () {
-      toggleFavorite(book);
+    card.querySelector(".favHeart").addEventListener("click", function () {
+      toggleFav(book);
     });
 
     bookList.appendChild(card);
@@ -215,44 +209,41 @@ function showBooks(books) {
 }
 
 
+searchBtn.addEventListener("click", fetchBooks);
 
-searchBtn.addEventListener("click", getBooks);
+searchInput.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    fetchBooks();
+  }
+});
 
 filterInput.addEventListener("input", function () {
   if (!showingFavorites) {
-    applyFiltersAndSort();
+    filterSortAndShow();
   }
 });
 
 sortSelect.addEventListener("change", function () {
   if (!showingFavorites) {
-    applyFiltersAndSort();
+    filterSortAndShow();
   }
 });
 
 authorFilter.addEventListener("change", function () {
   if (!showingFavorites) {
-    applyFiltersAndSort();
+    filterSortAndShow();
   }
 });
-
 
 
 favBtn.addEventListener("click", function () {
   showingFavorites = true;
 
-  let favBooks = getFavorites();
+  let favBooks = getFavBooks();
 
   if (favBooks.length === 0) {
     bookList.innerHTML = "<h2>No favorites saved ❤️</h2>";
   } else {
     showBooks(favBooks);
-  }
-});
-
-
-searchInput.addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    getBooks();
   }
 });
