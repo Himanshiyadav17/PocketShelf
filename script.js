@@ -12,6 +12,7 @@ let favBtn = document.getElementById("favBtn");
 
 let allBooks = [];
 let showingFavorites = false;
+let isFetching = false;
 
 
 function setTheme() {
@@ -42,6 +43,38 @@ setTheme();
 function getFavBooks() {
   let favData = localStorage.getItem("favorites");
   return favData ? JSON.parse(favData) : [];
+}
+
+function mapOpenLibraryToVolume(item) {
+  return {
+    id: item.key || item.cover_edition_key || (item.edition_key && item.edition_key[0]) || item.title,
+    volumeInfo: {
+      title: item.title || "No Title",
+      authors: item.author_name,
+      previewLink: item.key ? "https://openlibrary.org" + item.key : "",
+      imageLinks: item.cover_i
+        ? { thumbnail: "https://covers.openlibrary.org/b/id/" + item.cover_i + "-M.jpg" }
+        : undefined,
+    },
+  };
+}
+
+function fetchOpenLibraryBooks(searchValue) {
+  let url = "https://openlibrary.org/search.json?q=" + encodeURIComponent(searchValue) + "&limit=20";
+
+  return fetch(url)
+    .then(function (res) {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json();
+    })
+    .then(function (data) {
+      if (!data.docs || !data.docs.length) {
+        return [];
+      }
+      return data.docs.map(mapOpenLibraryToVolume);
+    });
 }
 
 function saveFavBooks(favs) {
@@ -81,29 +114,97 @@ function fetchBooks() {
     return;
   }
 
+  if (isFetching) {
+    return;
+  }
+
   showingFavorites = false;
   loadingText.innerText = "Loading books...";
   bookList.innerHTML = "";
+  searchBtn.disabled = true;
+  isFetching = true;
 
-  fetch("https://www.googleapis.com/books/v1/volumes?q=" + searchValue)
+  let googleUrl = "https://www.googleapis.com/books/v1/volumes?q=" + encodeURIComponent(searchValue) + "&maxResults=20";
+
+  fetch(googleUrl)
     .then(function (res) {
+      if (res.status === 429) {
+        throw { rateLimit: true };
+      }
+      if (!res.ok) {
+        throw res;
+      }
       return res.json();
     })
     .then(function (data) {
-      loadingText.innerText = "";
-
-      if (!data.items) {
-        bookList.innerHTML = "<h2>No books found</h2>";
-        allBooks = [];
+      if (data.items && data.items.length) {
+        loadingText.innerText = "";
+        isFetching = false;
+        searchBtn.disabled = false;
+        allBooks = data.items;
+        filterSortAndShow();
         return;
       }
 
-      allBooks = data.items;
-      filterSortAndShow();
+      return fetchOpenLibraryBooks(searchValue).then(function (fallbackBooks) {
+        loadingText.innerText = "";
+        isFetching = false;
+        searchBtn.disabled = false;
+
+        if (!fallbackBooks.length) {
+          bookList.innerHTML = "<h2>No books found</h2>";
+          allBooks = [];
+          return;
+        }
+
+        bookList.innerHTML = "<h2>Google Books limit reached. Showing Open Library results.</h2>";
+        allBooks = fallbackBooks;
+        filterSortAndShow();
+      });
     })
-    .catch(function () {
-      loadingText.innerText = "";
-      bookList.innerHTML = "<h2>Something went wrong!</h2>";
+    .catch(function (error) {
+      if (error && error.rateLimit) {
+        fetchOpenLibraryBooks(searchValue)
+          .then(function (fallbackBooks) {
+            loadingText.innerText = "";
+            isFetching = false;
+            searchBtn.disabled = false;
+
+            if (!fallbackBooks.length) {
+              bookList.innerHTML = "<h2>Rate limit exceeded. Please wait a moment and try again.</h2>";
+              allBooks = [];
+              return;
+            }
+
+            bookList.innerHTML = "<h2>Google Books limit reached. Showing Open Library results.</h2>";
+            allBooks = fallbackBooks;
+            filterSortAndShow();
+          })
+          .catch(function () {
+            loadingText.innerText = "";
+            isFetching = false;
+            searchBtn.disabled = false;
+            bookList.innerHTML = "<h2>Rate limit exceeded. Please wait a moment and try again.</h2>";
+          });
+      } else {
+        loadingText.innerText = "";
+        isFetching = false;
+        searchBtn.disabled = false;
+
+        fetchOpenLibraryBooks(searchValue)
+          .then(function (fallbackBooks) {
+            if (fallbackBooks.length) {
+              bookList.innerHTML = "<h2>Google Books failed. Showing Open Library results.</h2>";
+              allBooks = fallbackBooks;
+              filterSortAndShow();
+              return;
+            }
+            bookList.innerHTML = "<h2>Something went wrong!</h2>";
+          })
+          .catch(function () {
+            bookList.innerHTML = "<h2>Something went wrong!</h2>";
+          });
+      }
     });
 }
 
